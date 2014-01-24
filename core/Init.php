@@ -9,7 +9,7 @@ $GLOBALS['config'] = array(
         'db' => 'ctf'
     ),
     'remember' => array(
-        'cookie_name' => 'CTF',
+        'cookie_name' => 'Kryptos',
         'cookie_expiry' => 604800
     ),
     'session' => array(
