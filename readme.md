@@ -13,5 +13,8 @@ Put in your database username and password
 
 Go to http://localhost:8000
 
+Username: root
+Password: KryptosCTF
+
 Enjoy!!
 
