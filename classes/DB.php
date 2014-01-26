@@ -165,7 +165,8 @@ class DB {
     }
 
     public function first(){
-        return $this->results()[0];
+        $results = $this->results();
+        return $results[0];
     }
 
     public function error() {
