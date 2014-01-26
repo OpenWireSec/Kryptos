@@ -8,8 +8,6 @@ if($user->isLoggedIn()) {
     foreach($activeScans->results() as $results) {
         $active[] = $results;
     }
-
-
     $page = new Page;
     $page->setTitle('Dashboard');
     $page->startBody();

@@ -51,13 +51,6 @@ if(Input::exists()) {
             <a href="#" class="logo">
                 <img src="assets/images/logo.png" alt="" />
             </a>
-
-
-            <!-- progress bar indicator -->
-            <div class="login-progressbar-indicator">
-                <h3>43%</h3>
-                <span>logging in...</span>
-            </div>
         </div>
 
     </div>

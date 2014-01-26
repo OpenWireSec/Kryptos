@@ -7,12 +7,8 @@ if($user->isLoggedIn()) {
     foreach($all->results() as $results) {
         $allProjects[] = $results;
     }
-
 }
-
 ?>
-
-
 <div class="page-container horizontal-menu">
     <header class="navbar navbar-fixed-top">
 
@@ -35,11 +31,18 @@ if($user->isLoggedIn()) {
                     <a href="#"><i class="entypo-flow-tree"></i><span>Projects</span></a>
                     <ul>
                         <?php
-                        foreach ($allProjects as $projects) {
+                        if (!empty($allProjects)) {
+                            foreach ($allProjects as $projects) {
+                                echo '<li>';
+                                echo '<a href="project.php?name='.$projects['project'].'"><i class="entypo-flow-line"></i><span>'.$projects['project'].'</span></a>';
+                                echo '</li>';
+                            }
+                        } else {
                             echo '<li>';
-                            echo '<a href="project.php?name='.$projects['project'].'"><i class="entypo-flow-line"></i><span>'.$projects['project'].'</span></a>';
+                            echo '<a name="none"><i class="entypo-flow-line"></i><span>No Projects</span></a>';
                             echo '</li>';
-                        } ?>
+                        }
+                        ?>
                     </ul>
                 </li>
                 <li>

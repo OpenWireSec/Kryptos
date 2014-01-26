@@ -60,55 +60,72 @@ if($user->isLoggedIn()) {
         }
 
         if(isset($_POST['addMultiple'])) {
-            if($_FILES['uploadedfile']['size'] != 0) {
-                $filename = basename($_FILES['uploadedfile']['name']);
-                $ext = substr($filename, strrpos($filename, '.') + 1);
+            if(Input::get('XMLType') == 'nmap') {
+                if($_FILES['uploadedfile']['size'] != 0) {
+                    if($_FILES['uploadedfile']['type'] == 'text/plain' || $_FILES['uploadedfile']['type'] == 'text/xml') {
+                        $target_path = "queue/";
+                        $target_path = $target_path . basename( $_FILES['uploadedfile']['name']);
 
-                if ($ext == 'nessus') {
-                    $newname = dirname(__FILE__) .'/uploads/'. $filename;
-                    if (file_exists($newname)) unlink($newname);
-                    if (!file_exists($newname) and move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $newname))
-                    {
-                        $nessus = new Nessus();
-                        $nessus->parse_xml_file($newname);
-                        unlink($newname);
-                    }
+                        if(move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $target_path)) {
+                            $parser = new Parser();
+                            $parser->nmapParse('queue/'.$_FILES['uploadedfile']['name']);
 
-                }
-                else if($_FILES['uploadedfile']['type'] == 'text/xml') {
-                    $target_path = "queue/";
-                    $target_path = $target_path . basename( $_FILES['uploadedfile']['name']);
-
-                    if(move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $target_path)) {
-                        $parser = new Parser();
-                        $parser->nmapParse('queue/'.$_FILES['uploadedfile']['name']);
-
-                        $hosts = $parser->nmap();
-                        foreach($hosts as $ips => $ip) {
-                            foreach($ip as $index => $ports) {
-                                foreach($ports as $port => $services) {
-                                    $hosts = DB::getInstance()->insertAssoc('hosts', array(
-                                        'host' => $ips,
-                                        'port' => $port,
-                                        'protocol' => $services['Protocol'],
-                                        'state' => $services['State'],
-                                        'reason' => $services['Reason'],
-                                        'name' => $services['Name'],
-                                        'product' => $services['Product'],
-                                        'version' => $services['Version'],
-                                        'project' => htmlentities(Input::get('projectname')),
-                                        'startedby' => $user->data()->username
-                                    ));
+                            $hosts = $parser->nmap();
+                            foreach($hosts as $ips => $ip) {
+                                foreach($ip as $index => $ports) {
+                                    foreach($ports as $port => $services) {
+                                        $hosts = DB::getInstance()->insertAssoc('hosts', array(
+                                            'host' => $ips,
+                                            'port' => $port,
+                                            'protocol' => $services['Protocol'],
+                                            'state' => $services['State'],
+                                            'reason' => $services['Reason'],
+                                            'name' => $services['Name'],
+                                            'product' => $services['Product'],
+                                            'version' => $services['Version'],
+                                            'project' => $project,
+                                            'startedby' => $user->data()->username,
+                                            'scannedFrom' => 'Nmap'
+                                        ));
+                                    }
                                 }
                             }
+                            Redirect::to('index.php');
+                        } else{
+                            echo "There was an error uploading the file, please try again!";
+                            Redirect::to('index.php');
                         }
                     } else {
-                        echo "There was an error uploading the file, please try again!";
+                        echo "Invalid File Type";
+                        Redirect::to('index.php');
+                    }
+                }
+            }
+            else if(Input::get('XMLType') == 'nessus') {
+
+                if (!empty($_FILES['uploadedfile']) && $_FILES['uploadedfile']['error'] == 0) {
+                    $filename = basename($_FILES['uploadedfile']['name']);
+                    $ext = substr($filename, strrpos($filename, '.') + 1);
+
+                    if ($ext == 'nessus' && !empty($_FILES['uploadedfile']['type']) && $_FILES['uploadedfile']['size'] < 10485760)
+                    {
+                        $newname = dirname(__FILE__) .'/uploads/'. $filename;
+
+                        if (file_exists($newname)) unlink($newname);
+
+                        if (!file_exists($newname) and move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $newname)) {
+                            $nessus = new Nessus();
+                            $nessus->parse_xml_file($newname, $project);
+                            unlink($newname);
+                        } else {
+                            echo "Error";
+                        }
+                    } else {
+                        echo "Error";
                     }
                 } else {
-                    echo "Invalid File Type";
+                    echo "Error";
                 }
-                Redirect::to('project.php?name='.htmlentities($project));
             }
         }
 
@@ -125,6 +142,7 @@ if($user->isLoggedIn()) {
             DB::getInstance()->delete('hosts', array('project', '=', $project));
             DB::getInstance()->delete('hostnotes', array('project', '=', $project));
             DB::getInstance()->delete('projectnotes', array('projectname', '=', $project));
+            DB::getInstance()->delete('nessus', array('project', '=', $project));
             Redirect::to('index.php');
         }
         if(isset($_POST['editNotes'])) {
@@ -166,7 +184,7 @@ if($user->isLoggedIn()) {
     <div class="row">
         <div class="col-md-12">
 
-            <div class="panel panel-invert" data-collapsed="0"><!-- setting the attribute data-collapsed="1" will collapse the panel -->
+            <div class="panel panel-invert" data-collapsed="0">
 
                 <!-- panel head -->
                 <div class="panel-heading">
@@ -302,7 +320,6 @@ if($user->isLoggedIn()) {
                 </div>
 
                 <div class="panel-body">
-
                     <form enctype="multipart/form-data" action="" method="POST">
                         <div class="form-group">
                             <label class="control-label">Upload Nessus or NMap XML</label>
@@ -319,6 +336,24 @@ if($user->isLoggedIn()) {
                                                 </span>
                                     <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Choose XML Type</label>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="XMLType" id="noXML" value="none" checked>None
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="XMLType" id="nmapXML" value="nmap">Nmap XML
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="XMLType" id="nessusXML" value="nessus">Nessus XML
+                                </label>
                             </div>
                         </div>
                         <input type="hidden" name="MAX_FILE_SIZE" value="99999999999999999">
