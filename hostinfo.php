@@ -20,7 +20,7 @@ if($user->isLoggedIn()) {
         Redirect::to('index.php');
     }
 
-    $getPorts = DB::getInstance()->getAssoc("SELECT * FROM hosts WHERE host = ?", array($host));
+    $getPorts = DB::getInstance()->getAssoc("SELECT DISTINCT port,project,scannedFrom FROM hosts WHERE host = ? ORDER BY port", array($host));
     foreach($getPorts->results() as $results) {
         $ports[] = $results;
     }
@@ -251,7 +251,7 @@ if($user->isLoggedIn()) {
                     <thead>
                     <tr>
                         <th width="1%">Port</th>
-                        <th>Port Info</th>
+                            <th>Scanned From</th>
                     </tr>
                     </thead>
 
@@ -262,18 +262,8 @@ if($user->isLoggedIn()) {
                             if($value['port'] != NULL) {
                                 echo '<tr>';
                                 echo '<td><a href="portinfo.php?project='.$project.'&host='.$host.'&port='.$value['port'].'"><span class="badge badge-info badge-roundless">'.$value['port'].'</span></a></td>';
-                                echo '<td>';
-                                if($value['protocol'] != NULL)
-                                    echo 'Protocol: <span style="color: #ac1818">'.ucwords($value['protocol']).'</span><br>';
-                                if($value['state'] != NULL)
-                                    echo 'State: <span style="color: #ac1818">'.ucwords($value['state']).'</span><br>';
-                                if($value['name'] != NULL)
-                                    echo 'Name: <span style="color: #ac1818">'.ucwords($value['name']).'</span><br>';
-                                if($value['product'] != NULL)
-                                    echo 'Product: <span style="color: #ac1818">'.ucwords($value['product']).'</span><br>';
-                                if($value['version'] != NULL)
-                                    echo 'Version: <span style="color: #ac1818">'.ucwords($value['version']).'</span><br>';
-                                echo '</td>';
+
+                                echo '<td>'.ucwords($value['scannedFrom']).'</td>';
                                 echo '</tr>';
                             } else {
                                 echo '<tr><td></td></tr>';
@@ -285,6 +275,8 @@ if($user->isLoggedIn()) {
                     </tbody>
                 </table>
             </div>
+
+
 
             <div class="panel panel-primary">
 

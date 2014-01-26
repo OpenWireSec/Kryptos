@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 24, 2014 at 12:54 AM
+-- Generation Time: Jan 26, 2014 at 07:45 PM
 -- Server version: 5.6.12-log
 -- PHP Version: 5.4.12
 
@@ -34,7 +34,14 @@ CREATE TABLE IF NOT EXISTS `challenges` (
   `project` varchar(250) DEFAULT NULL,
   `type` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+
+--
+-- Dumping data for table `challenges`
+--
+
+INSERT INTO `challenges` (`id`, `challengeName`, `project`, `type`) VALUES
+(1, 'Test', 'Test', 'SQLi');
 
 -- --------------------------------------------------------
 
@@ -89,36 +96,21 @@ CREATE TABLE IF NOT EXISTS `hosts` (
   `version` varchar(50) DEFAULT NULL,
   `project` varchar(100) DEFAULT NULL,
   `startedby` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `nessus`
---
-
-CREATE TABLE IF NOT EXISTS `nessus` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `port` int(6) DEFAULT NULL,
   `service` varchar(255) DEFAULT NULL,
-  `protocol` varchar(255) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
   `risk_factor` varchar(255) DEFAULT NULL,
   `severity` varchar(255) DEFAULT NULL,
   `synopsis` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `family` varchar(255) DEFAULT NULL,
-  `exploit_available` varchar(255) DEFAULT NULL,
   `cve` varchar(255) DEFAULT NULL,
   `bid` varchar(255) DEFAULT NULL,
   `xref` varchar(255) DEFAULT NULL,
-  `host` varchar(20) DEFAULT NULL,
   `fqdn` varchar(255) DEFAULT NULL,
-  `os` varchar(255) DEFAULT NULL,
   `netbios` varchar(255) DEFAULT NULL,
+  `os` varchar(255) DEFAULT NULL,
+  `scannedFrom` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=62654 ;
 
 -- --------------------------------------------------------
 
@@ -185,7 +177,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `salt`, `group`, `isLoggedIn`, `idleTime`, `location`) VALUES
-(53, 'root', '59e5aea3f253393c2c7a2a5767ca01a3be59758601953982e036c3a523a99209', 'TxWmn%c@r6%cQv#8aipRT2fcojA1E360', 1, 1, 1390336618, 'Dashboard');
+(53, 'root', '59e5aea3f253393c2c7a2a5767ca01a3be59758601953982e036c3a523a99209', 'TxWmn%c@r6%cQv#8aipRT2fcojA1E360', 1, 1, 1390765466, 'Dashboard');
 
 -- --------------------------------------------------------
 

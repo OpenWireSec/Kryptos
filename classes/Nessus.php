@@ -1,7 +1,9 @@
 <?php
 
 class Nessus {
-    function nessusValue($__xml_tree, $__tag_path)
+    public $project;
+
+    public function nessusValue($__xml_tree, $__tag_path)
     {
         $tmp_arr =& $__xml_tree;
         $tag_path = explode('/', $__tag_path);
@@ -23,7 +25,7 @@ class Nessus {
         return $tmp_arr;
     }
 
-    function nessusArray($__url)
+    public function nessusArray($__url)
     {
         $xml_values = array();
         $contents = file_get_contents($__url);
@@ -78,8 +80,9 @@ class Nessus {
         return $xml_array;
     }
 
-    function loop_host(&$report_host)
+    public function loop_host(&$report_host)
     {
+        //global $final, $host_addr;
         foreach ($report_host AS $report_item)
         {
             if (isset($report_item['name']) && $report_item['name'] == 'HostProperties')
@@ -90,7 +93,7 @@ class Nessus {
         }
     }
 
-    function loop_property(&$report_item)
+    public function loop_property(&$report_item)
     {
         global $final, $host_addr;
 
@@ -101,7 +104,7 @@ class Nessus {
         }
     }
 
-    function loop_item(&$report_item)
+    public function loop_item(&$report_item)
     {
         global $final, $host_addr, $vuln_id;
         foreach ($report_item AS $curr_item)
@@ -134,16 +137,18 @@ class Nessus {
         }
     }
 
-    function parse_xml_file($filename)
+    public function parse_xml_file($filename, $projectName)
     {
         global $final, $host_addr;
+
+        $this->project = $projectName;
         $full = $this->nessusArray($filename);
         $report = $this->nessusValue($full, 'NessusClientData_v2/Report');
 
         $final = array();
         $host_addr = '';
         $vuln_id = -1;
-        //$final['report_name'] = $report['attributes']['name'];
+        $final['report_name'] = $report['attributes']['name'];
 
         foreach ($report AS $report_host) {
             if (isset($report_host['name']) && $report_host['name'] == 'ReportHost')
@@ -153,37 +158,35 @@ class Nessus {
                 $this->loop_host($report_host);
             }
         }
+
         $this->render();
     }
 
-    function match_filters(&$vuln)
+    public function match_filters(&$vuln)
     {
-        $whitelistSevr = array(
+        $whitelist = array(
             'High' => 'on',
             'Medium' => 'on',
             'Low' => 'on',
             'None' => 'on'
         );
-        $whitelist_sevr = array_keys($whitelistSevr);
-        $ms_filter = "all";
+        $whitelist_sevr = array_keys($whitelist);
+        if(!empty($_POST['ms'])) {
+            $ms_filter = $_POST['ms'];
+        }
 
-        $is_ms = (preg_match("/MS[0-9]{2}-[0-9]{3}: /", substr($vuln['name'], 0, 10)) > 0) ? true : false;
+
+        $is_ms = 'all';
 
         if (!isset($vuln['risk_factor']) or
             (isset($vuln['risk_factor']) and
                 !in_array($vuln['risk_factor'], $whitelist_sevr)))
 
             return false;
-
-        if ((!$is_ms and $ms_filter == 'only_ms') or
-            ($is_ms and $ms_filter == 'no_ms'))
-
-            return false;
-
         return true;
     }
 
-    function get_num_vulns(&$vulns)
+    public function get_num_vulns(&$vulns)
     {
         $ret = 0;
 
@@ -192,9 +195,10 @@ class Nessus {
         return $ret;
     }
 
-    function render()
+    public function render()
     {
         global $final;
+
         $all_cols = array('port', 'service', 'protocol', 'name', 'risk_factor', 'severity', 'synopsis', 'description', 'id', 'family',
             'exploit_available', 'cve', 'bid', 'xref');
         $whitelistCols = array(
@@ -214,45 +218,106 @@ class Nessus {
             'xref' => 'on'
         );
         $whitelist_cols = array_keys($whitelistCols);
-
+        unset($final['report_name']);
         foreach ($final AS $ip => $host)
         {
             $host_done = 0;
             $props = &$host['properties'];
-            $rowspan = $this->get_num_vulns($host['vulns']);
-
             foreach ($host['vulns'] AS $vuln)
             {
                 if (!$this->match_filters($vuln))
                     continue ;
-
-
-                if ($host_done == 0)
-                {
-                    echo $ip;
-                    echo isset($props['host-fqdn'])."<br>";
-                    echo isset($props['netbios-name'])."<br>";
-                    echo isset($props['operating-system'])."<br>";
-                    $host_done = 1;
+                foreach ($all_cols AS $col) {
+                    if (in_array($col, $whitelist_cols)) {
+                        if(isset($vuln[$col])) {
+                            if(isset($vuln['service'])) {
+                                $service = $vuln['service'];
+                            } else {
+                                $service = NULL;
+                            }
+                            if(isset($vuln['protocol'])) {
+                                $protocol = $vuln['protocol'];
+                            } else {
+                                $protocol = NULL;
+                            }
+                            if(isset($vuln['name'])) {
+                                $name = $vuln['name'];
+                            } else {
+                                $name = NULL;
+                            }
+                            if(isset($vuln['risk_factor'])) {
+                                $risk_factor = $vuln['risk_factor'];
+                            } else {
+                                $risk_factor = NULL;
+                            }
+                            if(isset($vuln['severity'])) {
+                                $severity = $vuln['severity'];
+                            } else {
+                                $severity = NULL;
+                            }
+                            if(isset($vuln['synopsis'])) {
+                                $synopsis = $vuln['synopsis'];
+                            } else {
+                                $synopsis = NULL;
+                            }
+                            if(isset($vuln['description'])) {
+                                $description = $vuln['description'];
+                            } else {
+                                $description = NULL;
+                            }
+                            if(isset($vuln['id'])) {
+                                $id = $vuln['id'];
+                            } else {
+                                $id = NULL;
+                            }
+                            if(isset($vuln['family'])) {
+                                $family = $vuln['family'];
+                            } else {
+                                $family = NULL;
+                            }
+                            if(isset($vuln['cve'])) {
+                                $cve = $vuln['cve'];
+                            } else {
+                                $cve = NULL;
+                            }
+                            if(isset($vuln['bid'])) {
+                                $bid = $vuln['bid'];
+                            } else {
+                                $bid = NULL;
+                            }
+                            if(isset($vuln['xref'])) {
+                                $xref = $vuln['xref'];
+                            } else {
+                                $xref = NULL;
+                            }
+                            $user = new User();
+                            $nessus = DB::getInstance()->insertAssoc('hosts', array(
+                                'id' => $id,
+                                'host' => $ip,
+                                'port' => $vuln['port'],
+                                'protocol' => $protocol,
+                                'name' => $name,
+                                'service' => $service,
+                                'risk_factor' => $risk_factor,
+                                'severity' => $severity,
+                                'synopsis' => $synopsis,
+                                'description' => $description,
+                                'family' => $family,
+                                'cve' => $cve,
+                                'bid' => $bid,
+                                'xref' => $xref,
+                                'fqdn' => $props['host-fqdn'],
+                                'netbios' => $props['netbios-name'],
+                                'os' => $props['operating-system'],
+                                'project' => $this->project,
+                                'startedby' => $user->data()->username,
+                                'scannedFrom' => 'Nessus'
+                            ));
+                        }
+                    }
                 }
-
-                echo $vuln['port']."<br>";
-                echo $vuln['service']."<br>";
-                echo $vuln['protocol']."<br>";
-                echo $vuln['severity']."<br>";
-                echo $vuln['id']."<br>";
-                echo $vuln['name']."<br>";
-                echo $vuln['family']."<br>";
-                echo $vuln['description']."<br>";
-                echo $vuln['fname']."<br>";
-                echo $vuln['plugin_name']."<br>";
-                echo $vuln['risk_factor']."<br>";
-                echo $vuln['synopsis']."<br>";
-                echo $vuln['plugin_output']."<br><br>";
-
-
             }
-            flush();
         }
+        Redirect::to('index.php');
     }
 }

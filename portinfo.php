@@ -128,6 +128,32 @@ if($user->isLoggedIn()) {
                             echo 'Product: <span style="color: #ac1818">'.ucwords($value['product']).'</span><br>';
                         if($value['version'] != NULL)
                             echo 'Version: <span style="color: #ac1818">'.ucwords($value['version']).'</span><br>';
+                        if($value['service'] != NULL)
+                            echo 'Service: <span style="color: #ac1818">'.ucwords($value['service']).'</span><br>';
+                        if($value['risk_factor'] != NULL)
+                            echo 'Risk Factor: <span style="color: #ac1818">'.ucwords($value['risk_factor']).'</span><br>';
+                        if($value['severity'] != NULL)
+                            echo 'Severity: <span style="color: #ac1818">'.ucwords($value['severity']).'</span><br>';
+                        if($value['synopsis'] != NULL)
+                            echo 'Synopsis: <span style="color: #ac1818">'.ucwords($value['synopsis']).'</span><br>';
+                        if($value['description'] != NULL)
+                            echo 'Description: <span style="color: #ac1818">'.ucwords($value['description']).'</span><br>';
+                        if($value['family'] != NULL)
+                            echo 'Family: <span style="color: #ac1818">'.ucwords($value['family']).'</span><br>';
+                        if($value['cve'] != NULL)
+                            echo 'CVE: <span style="color: #ac1818">'.ucwords($value['cve']).'</span><br>';
+                        if($value['bid'] != NULL)
+                            echo 'BID: <span style="color: #ac1818">'.ucwords($value['bid']).'</span><br>';
+                        if($value['xref'] != NULL)
+                            echo 'XREF: <span style="color: #ac1818">'.ucwords($value['xref']).'</span><br>';
+                        if($value['netbios'] != NULL)
+                            echo 'Netbios: <span style="color: #ac1818">'.ucwords($value['netbios']).'</span><br>';
+                        if($value['fqdn'] != NULL)
+                            echo 'FQDN: <span style="color: #ac1818">'.ucwords($value['fqdn']).'</span><br>';
+                        if($value['os'] != NULL)
+                            echo 'OS: <span style="color: #ac1818">'.ucwords($value['os']).'</span><br>';
+                        if($value['scannedFrom'] != NULL)
+                            echo 'Scanned From: <span style="color: #ac1818">'.ucwords($value['scannedFrom']).'</span><br>';
                         echo '</td>';
                         echo '</tr>';
                     } else {
