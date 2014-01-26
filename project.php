@@ -143,6 +143,7 @@ if($user->isLoggedIn()) {
             DB::getInstance()->delete('hostnotes', array('project', '=', $project));
             DB::getInstance()->delete('projectnotes', array('projectname', '=', $project));
             DB::getInstance()->delete('nessus', array('project', '=', $project));
+            DB::getInstance()->delete('challenges', array('project', '=', $project));
             Redirect::to('index.php');
         }
         if(isset($_POST['editNotes'])) {
