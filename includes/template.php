@@ -22,6 +22,7 @@ $user = new User();
     <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="assets/css/neon.css">
     <link rel="stylesheet" href="assets/css/custom.css">
+    <link rel="stylesheet" href="assets/css/prism.css">
 
     <script src="assets/js/jquery-1.10.2.min.js"></script>
 

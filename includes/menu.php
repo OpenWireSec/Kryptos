@@ -124,3 +124,4 @@ if($user->isLoggedIn()) {
             <script src="assets/js/neon-chat.js"></script>
             <script src="assets/js/neon-custom.js"></script>
             <script src="assets/js/fileinput.js"></script>
+            <script src="assets/js/prism.js"></script>

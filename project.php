@@ -102,7 +102,6 @@ if($user->isLoggedIn()) {
                 }
             }
             else if(Input::get('XMLType') == 'nessus') {
-
                 if (!empty($_FILES['uploadedfile']) && $_FILES['uploadedfile']['error'] == 0) {
                     $filename = basename($_FILES['uploadedfile']['name']);
                     $ext = substr($filename, strrpos($filename, '.') + 1);
@@ -364,7 +363,6 @@ if($user->isLoggedIn()) {
                             <button type="submit" name="addMultiple" class="btn btn-success">Add Hosts</button>
                             <button type="reset" class="btn">Reset</button>
                         </div>
-
                     </form>
                 </div>
             </div>

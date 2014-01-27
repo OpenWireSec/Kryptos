@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 26, 2014 at 07:45 PM
+-- Generation Time: Jan 27, 2014 at 02:14 AM
 -- Server version: 5.6.12-log
 -- PHP Version: 5.4.12
 
@@ -25,23 +25,16 @@ USE `ctf`;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `challenges`
+-- Table structure for table `challengenotes`
 --
 
-CREATE TABLE IF NOT EXISTS `challenges` (
+CREATE TABLE IF NOT EXISTS `challengenotes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `challengeName` varchar(100) DEFAULT NULL,
-  `project` varchar(250) DEFAULT NULL,
-  `type` varchar(50) DEFAULT NULL,
+  `challenge` varchar(255) DEFAULT NULL,
+  `notes` text,
+  `project` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
-
---
--- Dumping data for table `challenges`
---
-
-INSERT INTO `challenges` (`id`, `challengeName`, `project`, `type`) VALUES
-(1, 'Test', 'Test', 'SQLi');
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -110,7 +103,7 @@ CREATE TABLE IF NOT EXISTS `hosts` (
   `os` varchar(255) DEFAULT NULL,
   `scannedFrom` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=62654 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -151,8 +144,23 @@ CREATE TABLE IF NOT EXISTS `screenshots` (
   `host` varchar(15) DEFAULT NULL,
   `project` varchar(255) DEFAULT NULL,
   `url` varchar(255) DEFAULT NULL,
+  `challenge` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `source`
+--
+
+CREATE TABLE IF NOT EXISTS `source` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `challenge` varchar(255) DEFAULT NULL,
+  `project` varchar(255) DEFAULT NULL,
+  `source` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 -- --------------------------------------------------------
 
@@ -177,7 +185,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `salt`, `group`, `isLoggedIn`, `idleTime`, `location`) VALUES
-(53, 'root', '59e5aea3f253393c2c7a2a5767ca01a3be59758601953982e036c3a523a99209', 'TxWmn%c@r6%cQv#8aipRT2fcojA1E360', 1, 1, 1390765466, 'Dashboard');
+(53, 'root', '59e5aea3f253393c2c7a2a5767ca01a3be59758601953982e036c3a523a99209', 'TxWmn%c@r6%cQv#8aipRT2fcojA1E360', 1, 1, 1390788822, 'Challenge Information');
 
 -- --------------------------------------------------------
 
